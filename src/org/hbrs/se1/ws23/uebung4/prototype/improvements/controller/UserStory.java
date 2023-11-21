@@ -98,5 +98,17 @@ import java.io.Serializable;
             else return -1;
         }
 
+   //    public UserStory(int id, String titel, int mehrwert, int strafe,
+     //                    int aufwand, int risk, double prio) {
+        public String toString(){
+
+
+                return "UserStory Nr."+ getId() +", Titel:„"+getTitel()+"“, Projekt " +getProject();
+
+
+
+
+        }
+
     }
 

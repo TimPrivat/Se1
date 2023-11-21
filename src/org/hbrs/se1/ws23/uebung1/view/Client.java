@@ -1,5 +1,9 @@
 package org.hbrs.se1.ws23.uebung1.view;
 
+import org.hbrs.se1.ws23.uebung1.control.GermanTranslator;
+import org.hbrs.se1.ws23.uebung1.control.Translator;
+import org.hbrs.se1.ws23.uebung1.control.TranslatorFactory;
+
 public class Client {
 
 		/*
@@ -13,9 +17,10 @@ public class Client {
 			// aufgerufen werden.
 			//
 			// Strenge Implementierung gegen das Interface Translator gewuenscht!
+			Translator germanTranslator = (GermanTranslator) TranslatorFactory.getTranslator("germantranslator");
 
-			System.out.println("Das Ergebnis der Berechnung: " +
-					"[das Ergebnis an dieser Stelle]"  );
+
+			 System.out.println("Das Ergebnis der Berechnung: " + germanTranslator.translateNumber(aNumber));
 
 		 }
 }

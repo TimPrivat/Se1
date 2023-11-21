@@ -24,230 +24,281 @@ import java.util.stream.Collectors;
  * Alternative: Container mit Generic entwickeln (z.B. Container<E>))
  *
  * Achtung: eine weitere Aufteilung dieser Klasse ist notwendig (siehe F2, vgl auch Klassendiagramm für 4-2)
- * 
+ *
  */
 
 public class Container {
-	 
-	// Interne ArrayList zur Abspeicherung der Objekte vom Type UserStory
-	private List<UserStory> liste = null;
-	
-	// Statische Klassen-Variable, um die Referenz
-	// auf das einzige Container-Objekt abzuspeichern
-	// Diese Variante sei thread-safe, so hat Hr. P. es gehört... stimmt das? --> Richtig!
-	// Nachteil: ggf. geringer Speicherbedarf, da Singleton zu Programmstart schon erzeugt
-	// --> Falsch, es besteht direkt ein hoher Speicherbedarf!
-	private static Container instance = new Container();
-	
-	// URL der Datei, in der die Objekte gespeichert werden 
-	final static String LOCATION = "allStories.ser";
 
-	/**
-	 * Liefert ein Singleton zurück.
-	 * @return
-	 */
-	public static Container getInstance() {
-		return instance;
-	}
-	
-	/**
-	 * Vorschriftsmäßiges Ueberschreiben des Konstruktors (private) gemaess Singleton-Pattern (oder?)
-	 * Nun auf private gesetzt! Vorher ohne Access Qualifier (--> dann package-private)
-	 */
-	private Container(){
-		liste = new ArrayList<UserStory>();
-	}
-	
-	/**
-	 * Start-Methoden zum Starten des Programms 
-	 * (hier koennen ggf. weitere Initialisierungsarbeiten gemacht werden spaeter)
-	 */
-	public static void main (String[] args) throws Exception {
-		Container con = Container.getInstance();
-		con.startEingabe(); 
-	}
-	
-	/*
-	 * Diese Methode realisiert eine Eingabe ueber einen Scanner
-	 * Alle Exceptions werden an den aufrufenden Context (hier: main) weitergegeben (throws)
-	 * Das entlastet den Entwickler zur Entwicklungszeit und den Endanwender zur Laufzeit
-	 */
-	public void startEingabe() throws ContainerException, Exception {
-		String strInput = null;
-		
-		// Initialisierung des Eingabe-View
-		Scanner scanner = new Scanner( System.in );
+    // Interne ArrayList zur Abspeicherung der Objekte vom Type UserStory
+    private List<UserStory> liste = null;
 
-		while ( true ) {
-			// Ausgabe eines Texts zur Begruessung
-			System.out.println("UserStory-Tool V1.0 by Julius P. (dedicated to all my friends)");
+    // Statische Klassen-Variable, um die Referenz
+    // auf das einzige Container-Objekt abzuspeichern
+    // Diese Variante sei thread-safe, so hat Hr. P. es gehört... stimmt das? --> Richtig!
+    // Nachteil: ggf. geringer Speicherbedarf, da Singleton zu Programmstart schon erzeugt
+    // --> Falsch, es besteht direkt ein hoher Speicherbedarf!
+    private static Container instance = new Container();
 
-			System.out.print( "> "  );
-			strInput = scanner.nextLine();
-		
-			// Extrahiert ein Array aus der Eingabe
-			String[] strings = strInput.split(" ");
+    // URL der Datei, in der die Objekte gespeichert werden
+    final static String LOCATION = "allStories.ser";
 
-			// 	Falls 'help' eingegeben wurde, werden alle Befehle ausgedruckt
-			if ( strings[0].equals("help") ) {
-				System.out.println("Folgende Befehle stehen zur Verfuegung: help, dump....");
-			}
-			// Auswahl der bisher implementierten Befehle:
-			if ( strings[0].equals("dump") ) {
-				startAusgabe();
-			}
-			// Auswahl der bisher implementierten Befehle:
-			if ( strings[0].equals("enter") ) {
-				// Daten einlesen ...
-				// this.addUserStory( new UserStory( data ) ) um das Objekt in die Liste einzufügen.
-			}
-								
-			if (  strings[0].equals("store")  ) {
-				// Beispiel-Code
-				UserStory userStory = new UserStory();
-				userStory.setId(22);
-				this.addUserStory( userStory );
-				this.store();
-			}
-		} // Ende der Schleife
-	}
+    /**
+     * Liefert ein Singleton zurück.
+     *
+     * @return
+     */
+    public static Container getInstance() {
+        return instance;
+    }
 
-	/**
-	 * Diese Methode realisiert die Ausgabe.
-	 */
-	public void startAusgabe() {
+    /**
+     * Vorschriftsmäßiges Ueberschreiben des Konstruktors (private) gemaess Singleton-Pattern (oder?)
+     * Nun auf private gesetzt! Vorher ohne Access Qualifier (--> dann package-private)
+     */
+    private Container() {
+        liste = new ArrayList<UserStory>();
+    }
 
-		// Hier möchte Herr P. die Liste mit einem eigenen Sortieralgorithmus sortieren und dann
-		// ausgeben. Allerdings weiss der Student hier nicht weiter
+    /**
+     * Start-Methoden zum Starten des Programms
+     * (hier koennen ggf. weitere Initialisierungsarbeiten gemacht werden spaeter)
+     */
+    public static void main(String[] args) throws Exception {
+        Container con = Container.getInstance();
+        con.startEingabe();
+    }
 
-		// [Sortierung ausgelassen]
-		Collections.sort( this.liste );
+    /*
+     * Diese Methode realisiert eine Eingabe ueber einen Scanner
+     * Alle Exceptions werden an den aufrufenden Context (hier: main) weitergegeben (throws)
+     * Das entlastet den Entwickler zur Entwicklungszeit und den Endanwender zur Laufzeit
+     */
+    public void startEingabe() throws ContainerException, Exception {
+        String strInput = null;
 
-		// Klassische Ausgabe ueber eine For-Each-Schleife
-		for (UserStory story : liste) {
-			System.out.println(story.toString());
-		}
+        // Initialisierung des Eingabe-View
+        Scanner scanner = new Scanner(System.in);
 
-		// [Variante mit forEach-Methode / Streams (--> Kapitel 9, Lösung Übung Nr. 2)?
-		//  Gerne auch mit Beachtung der neuen US1
-		// (Filterung Projekt = "ein Wert (z.B. Coll@HBRS)" und Risiko >=5
-		List<UserStory> reduzierteListe = this.liste.stream()
-				.filter( story -> story.getProject().equals("Coll@HBRS") )
-				.filter(  story -> story.getRisk()  >= 5 )
-				.collect( Collectors.toList() );
-	}
+        while (true) {
+            // Ausgabe eines Texts zur Begruessung
+            System.out.println("UserStory-Tool V1.0 by Julius P. (dedicated to all my friends)");
 
-	/*
-	 * Methode zum Speichern der Liste. Es wird die komplette Liste
-	 * inklusive ihrer gespeicherten UserStory-Objekte gespeichert.
-	 * 
-	 */
-	private void store() throws ContainerException {
-		ObjectOutputStream oos = null;
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream( Container.LOCATION );
-			oos = new ObjectOutputStream(fos);
-			
-			oos.writeObject( this.liste );
-			System.out.println( this.size() + " UserStory wurden erfolgreich gespeichert!");
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		  //  Delegation in den aufrufendem Context
-		  // (Anwendung Pattern "Chain Of Responsibility)
-		  throw new ContainerException("Fehler beim Abspeichern");
-		}
-	}
+            System.out.print("> ");
+            strInput = scanner.nextLine();
 
-	/*
-	 * Methode zum Laden der Liste. Es wird die komplette Liste
-	 * inklusive ihrer gespeicherten UserStory-Objekte geladen.
-	 * 
-	 */
-	public void load() {
-		ObjectInputStream ois = null;
-		FileInputStream fis = null;
-		try {
-		  fis = new FileInputStream( Container.LOCATION );
-		  ois = new ObjectInputStream(fis);
-		  
-		  // Auslesen der Liste
-		  Object obj = ois.readObject();
-		  if (obj instanceof List<?>) {
-			  this.liste = (List) obj;
-		  }
-		  System.out.println("Es wurden " + this.size() + " UserStory erfolgreich reingeladen!");
-		}
-		catch (IOException e) {
-			System.out.println("LOG (für Admin): Datei konnte nicht gefunden werden!");
-		}
-		catch (ClassNotFoundException e) {
-			System.out.println("LOG (für Admin): Liste konnte nicht extrahiert werden (ClassNotFound)!");
-		}
-		finally {
-		  if (ois != null) try { ois.close(); } catch (IOException e) {}
-		  if (fis != null) try { fis.close(); } catch (IOException e) {}
-		}
-	}
+            // Extrahiert ein Array aus der Eingabe
+            String[] strings = strInput.split(";");
 
-	/**
-	 * Methode zum Hinzufügen eines Mitarbeiters unter Wahrung der Schlüsseleigenschaft
-	 * @param userStory
-	 * @throws ContainerException
-	 */
-	public void addUserStory ( UserStory userStory ) throws ContainerException {
-		if ( contains(userStory) == true ) {
-			ContainerException ex = new ContainerException("ID bereits vorhanden!");
-			throw ex;
-		}
-		liste.add(userStory);
-	}
+            // 	Falls 'help' eingegeben wurde, werden alle Befehle ausgedruckt
+            if (strings[0].equals("help")) {
+                System.out.println("Folgende Befehle stehen zur Verfuegung: help, dump....");
+            }
+            // Auswahl der bisher implementierten Befehle:
+            if (strings[0].equals("dump")) {
 
-	/**
-	 * Prüft, ob eine UserStory bereits vorhanden ist
-	 * @param userStory
-	 * @return
-	 */
-	private boolean contains( UserStory userStory ) {
-		int ID = userStory.getId();
-		for ( UserStory userStory1 : liste) {
-			if ( userStory1.getId() == ID ) {
-				return true;
-			}
-		}
-		return false;
-	}
+                if (strings.length > 1) {
+                    startAusgabe(strings[1]);
 
-	/**
-	 * Ermittlung der Anzahl von internen UserStory
-	 * -Objekten
-	 * @return
-	 */
-	public int size() {
-		return liste.size();
-	}
+                } else {
+                    startAusgabe("");
 
-	/**
-	 * Methode zur Rückgabe der aktuellen Liste mit Stories
-	 * Findet aktuell keine Anwendung bei Hr. P.
-	 * @return
-	 */
-	public List<UserStory> getCurrentList() {
-		return this.liste;
-	}
+                }
 
-	/**
-	 * Liefert eine bestimmte UserStory zurück
-	 * @param id
-	 * @return
-	 */
-	private UserStory getUserStory(int id) {
-		for ( UserStory userStory : liste) {
-			if (id == userStory.getId() ){
-				return userStory;
-			}
-		}
-		return null;
-	}
+            }
+            // Auswahl der bisher implementierten Befehle:
+            if (strings[0].equals("enter")) {
+
+                UserStory userStory = new UserStory();
+                userStory.setId(Integer.parseInt((strings[1])));
+                userStory.setTitel(strings[2]);
+                userStory.setMehrwert(Integer.parseInt((strings[3])));
+                userStory.setStrafe(Integer.parseInt((strings[4])));
+                userStory.setAufwand(Integer.parseInt((strings[5])));
+                userStory.setRisk(Integer.parseInt((strings[6])));
+                userStory.setPrio(Double.parseDouble((strings[7])));
+
+                if (strings[8] != null) userStory.setProject(strings[8]);
+
+
+                this.addUserStory(userStory);
+            }
+
+            if (strings[0].equals("store")) {
+                // Beispiel-Code
+                //	System.out.println("Reihenfolge:");
+                //	System.out.println("ID Titel Mehrwert Strafe Aufwand Risiko Priorität Projektname");
+                UserStory userStory = new UserStory();
+                userStory.setId(Integer.parseInt((strings[1])));
+                userStory.setTitel(strings[2]);
+                userStory.setMehrwert(Integer.parseInt((strings[3])));
+                userStory.setStrafe(Integer.parseInt((strings[4])));
+                userStory.setAufwand(Integer.parseInt((strings[5])));
+                userStory.setRisk(Integer.parseInt((strings[6])));
+                userStory.setPrio(Double.parseDouble((strings[7]).replaceAll(",", ".")));
+                userStory.setProject(strings[8]);
+
+
+                this.addUserStory(userStory);
+                this.store();
+            }
+            if (strings[0].equals("load")) {
+                this.load();
+            }
+            if (strings[0].equals("search")) {
+
+                for (UserStory u : liste) {
+                    if (u.getTitel().toLowerCase().contains(strings[1].toLowerCase())) System.out.println(u.toString());
+
+                }
+
+            }
+
+
+            if (strings[0].equals("exit")) {
+                System.out.println("Exiting Program....");
+                break;
+
+            }
+        } // Ende der Schleife
+    }
+
+    /**
+     * Diese Methode realisiert die Ausgabe.
+     */
+    public void startAusgabe(String projectname) {
+
+        Collections.sort(this.liste);
+
+        List<UserStory> reduzierteListe = liste;
+        if (!projectname.equals("")) {
+            reduzierteListe = this.liste.stream().filter(story -> story.getProject().equals(projectname)).collect(Collectors.toList());
+        }
+
+        for (UserStory story : reduzierteListe) {
+            System.out.println(story.toString());
+        }
+
+    }
+
+    /*
+     * Methode zum Speichern der Liste. Es wird die komplette Liste
+     * inklusive ihrer gespeicherten UserStory-Objekte gespeichert.
+     *
+     */
+    public void store() throws ContainerException {
+        ObjectOutputStream oos = null;
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(Container.LOCATION);
+            oos = new ObjectOutputStream(fos);
+
+            oos.writeObject(this.liste);
+            System.out.println(this.size() + " UserStory wurden erfolgreich gespeichert!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            //  Delegation in den aufrufendem Context
+            // (Anwendung Pattern "Chain Of Responsibility)
+            throw new ContainerException("Fehler beim Abspeichern");
+        }
+    }
+
+    /*
+     * Methode zum Laden der Liste. Es wird die komplette Liste
+     * inklusive ihrer gespeicherten UserStory-Objekte geladen.
+     *
+     */
+    public void load() {
+        ObjectInputStream ois = null;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(Container.LOCATION);
+            ois = new ObjectInputStream(fis);
+
+            // Auslesen der Liste
+            Object obj = ois.readObject();
+            if (obj instanceof List<?>) {
+                this.liste = (List) obj;
+            }
+            System.out.println("Es wurden " + this.size() + " UserStory erfolgreich reingeladen!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("LOG (für Admin): Datei konnte nicht gefunden werden!");
+        } catch (ClassNotFoundException e) {
+            System.out.println("LOG (für Admin): Liste konnte nicht extrahiert werden (ClassNotFound)!");
+        } finally {
+            if (ois != null) try {
+                ois.close();
+            } catch (IOException e) {
+            }
+            if (fis != null) try {
+                fis.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    /**
+     * Methode zum Hinzufügen eines Mitarbeiters unter Wahrung der Schlüsseleigenschaft
+     *
+     * @param userStory
+     * @throws ContainerException
+     */
+    public void addUserStory(UserStory userStory) throws ContainerException {
+        if (contains(userStory) == true) {
+            ContainerException ex = new ContainerException("ID bereits vorhanden!");
+            throw ex;
+        }
+        liste.add(userStory);
+    }
+
+    /**
+     * Prüft, ob eine UserStory bereits vorhanden ist
+     *
+     * @param userStory
+     * @return
+     */
+    private boolean contains(UserStory userStory) {
+        int ID = userStory.getId();
+        for (UserStory userStory1 : liste) {
+            if (userStory1.getId() == ID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Ermittlung der Anzahl von internen UserStory
+     * -Objekten
+     *
+     * @return
+     */
+    public int size() {
+        return liste.size();
+    }
+
+    /**
+     * Methode zur Rückgabe der aktuellen Liste mit Stories
+     * Findet aktuell keine Anwendung bei Hr. P.
+     *
+     * @return
+     */
+    public List<UserStory> getCurrentList() {
+        return this.liste;
+    }
+
+    /**
+     * Liefert eine bestimmte UserStory zurück
+     *
+     * @param id
+     * @return
+     */
+    private UserStory getUserStory(int id) {
+        for (UserStory userStory : liste) {
+            if (id == userStory.getId()) {
+                return userStory;
+            }
+        }
+        return null;
+    }
 }
